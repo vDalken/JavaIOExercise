@@ -31,13 +31,16 @@ public class Main {
                 case "2":
                     System.out.println("write your card number");
                     cardNumber = scan.nextLine();
+                    System.out.println();
                     System.out.println("write your passcode");
                     passcode = scan.nextLine();
+                    System.out.println();
                     ArrayList<String> info = new ArrayList<>();
                     if (isCardNumberValid(cardNumber, passcode)) {
                         info = getCardInfo(cardNumber);
                         boolean isCardBlocked = info.get(4).equals("true");
                         loggedCard = new Card(info.get(0), cardNumber, info.get(2), Integer.parseInt(info.get(3)), isCardBlocked);
+                        System.out.println("Welcome " + info.get(0) + "\n");
                     } else {
                         System.out.println("Account doesn't exist");
                     }
@@ -45,9 +48,8 @@ public class Main {
                         showLoggedMenu();
                     }
                     break;
-                case "3":
-                    break;
-                case "4":
+                default:
+                    System.out.println("\nPlease, type in a valid option\n");
                     break;
             }
         } while (!selectedOption.equals("0"));
@@ -138,6 +140,7 @@ public class Main {
                     System.out.println("You're going back to the main menu");
                     break;
                 case "1":
+                    transfer();
                     break;
                 case "2":
                     break;
@@ -150,5 +153,60 @@ public class Main {
                     break;
             }
         } while (!selectedOption.equals("0"));
+    }
+
+    private static void updateFile(ArrayList<String> updatedResourceFile){
+        try {
+            FileWriter rest = new FileWriter(resourceFile.getPath());
+            rest.write("");
+            rest.close();
+            FileWriter writer = new FileWriter(resourceFile.getPath(),true);
+            for(int i=0;i<updatedResourceFile.size();i++){
+                writer.append(updatedResourceFile.get(i)).append("\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private static void transfer() {
+        ArrayList<String> updatedResourceFile = new ArrayList<>();
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please write the card number");
+        String cardNumber = scan.nextLine();
+        System.out.println("Please write the amount you want to transfer");
+        String amountToTransfer = scan.nextLine();
+        int amountOfTheAccountThatsGoingToBeTransferedTheMoneyTo;
+        int totalAmountOfUserThatIsGoingToReceiveMoney;
+        try {
+            FileReader reader = new FileReader(resourceFile.getPath());
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(cardNumber)) {
+                    amountOfTheAccountThatsGoingToBeTransferedTheMoneyTo = Integer.parseInt(splitData[3]);
+                    totalAmountOfUserThatIsGoingToReceiveMoney = Integer.parseInt(amountToTransfer) + amountOfTheAccountThatsGoingToBeTransferedTheMoneyTo;
+                    splitData[3] = totalAmountOfUserThatIsGoingToReceiveMoney + "";
+                    String dataToWrite="";
+                    for (int i = 0; i < splitData.length; i++) {
+                        dataToWrite =dataToWrite.concat(splitData[i]+"-");
+                    }
+                    dataToWrite = dataToWrite.substring(0,dataToWrite.length()-1);
+                    //add dataToWrite in array
+                    updatedResourceFile.add(dataToWrite);
+                }else{
+                    updatedResourceFile.add(data);
+                }
+                data = bufferedReader.readLine();
+            }
+            updateFile(updatedResourceFile);
+            System.out.println();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
