@@ -155,13 +155,13 @@ public class Main {
         } while (!selectedOption.equals("0"));
     }
 
-    private static void updateFile(ArrayList<String> updatedResourceFile){
+    private static void updateFile(ArrayList<String> updatedResourceFile) {
         try {
             FileWriter rest = new FileWriter(resourceFile.getPath());
             rest.write("");
             rest.close();
-            FileWriter writer = new FileWriter(resourceFile.getPath(),true);
-            for(int i=0;i<updatedResourceFile.size();i++){
+            FileWriter writer = new FileWriter(resourceFile.getPath(), true);
+            for (int i = 0; i < updatedResourceFile.size(); i++) {
                 writer.append(updatedResourceFile.get(i)).append("\n");
             }
             writer.close();
@@ -190,23 +190,29 @@ public class Main {
                     amountOfTheAccountThatsGoingToBeTransferedTheMoneyTo = Integer.parseInt(splitData[3]);
                     totalAmountOfUserThatIsGoingToReceiveMoney = Integer.parseInt(amountToTransfer) + amountOfTheAccountThatsGoingToBeTransferedTheMoneyTo;
                     splitData[3] = totalAmountOfUserThatIsGoingToReceiveMoney + "";
-                    String dataToWrite="";
-                    for (int i = 0; i < splitData.length; i++) {
-                        dataToWrite =dataToWrite.concat(splitData[i]+"-");
-                    }
-                    dataToWrite = dataToWrite.substring(0,dataToWrite.length()-1);
-                    //add dataToWrite in array
-                    updatedResourceFile.add(dataToWrite);
-                }else{
+                    updatedResourceFile.add(concatenateSplitData(splitData));
+                } else if (splitData[1].equals(loggedCard.getCardNumber())) {
+                    int newBalance = loggedCard.getAccountBalance() - Integer.parseInt(amountToTransfer);
+                    splitData[3] =newBalance+"";
+                    updatedResourceFile.add(concatenateSplitData(splitData));
+                } else {
                     updatedResourceFile.add(data);
                 }
                 data = bufferedReader.readLine();
             }
             updateFile(updatedResourceFile);
-            System.out.println();
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private static String concatenateSplitData(String[] splitData){
+        String dataToWrite = "";
+        for (int i = 0; i < splitData.length; i++) {
+            dataToWrite = dataToWrite.concat(splitData[i] + "-");
+        }
+        dataToWrite = dataToWrite.substring(0, dataToWrite.length() - 1);
+        return dataToWrite;
     }
 }
