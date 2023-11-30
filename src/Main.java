@@ -69,7 +69,7 @@ public class Main {
     public static void writeOnTheFile(String name, String cardNumber, String passcode) {
         try {
             FileWriter writer = new FileWriter(resourceFile.getPath(), true);
-            String dataToWrite = name + "-" + cardNumber + "-" + passcode + "-0-false";
+            String dataToWrite = name + "-" + cardNumber + "-" + passcode + "-0-false\n";
             writer.append(dataToWrite);
             writer.close();
         } catch (IOException e) {
