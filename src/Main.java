@@ -98,6 +98,25 @@ public class Main {
         return false;
     }
 
+    private static boolean isCardNumberValid(String cardNumber) {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(resourceFile.getPath());
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(cardNumber)) {
+                    return true;
+                }
+                data = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
     private static boolean isCardNumberInTheFile(String[] splitData, String cardNumber) {
         if (splitData[1].equals(cardNumber)) {
             return true;
@@ -132,7 +151,7 @@ public class Main {
     public static void showLoggedMenu() {
         String selectedOption;
         do {
-            System.out.println("0. Exit\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card");
+            System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card");
             Scanner scan = new Scanner(System.in);
             selectedOption = scan.nextLine();
             switch (selectedOption) {
@@ -174,10 +193,39 @@ public class Main {
     private static void transfer() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
         Scanner scan = new Scanner(System.in);
-        System.out.println("Please write the card number");
-        String cardNumber = scan.nextLine();
-        System.out.println("Please write the amount you want to transfer");
-        String amountToTransfer = scan.nextLine();
+        boolean isCardNumberValid = false;
+        if (loggedCard.getAccountBalance() == 0) {
+            System.out.println("\nYou have to make a deposit first\n");
+            return;
+        }
+        String cardNumber = "";
+        while (!isCardNumberValid) {
+            System.out.println("\nPlease write the card number");
+            cardNumber = scan.nextLine();
+            cardNumber = cardNumber.trim();
+            if (isCardNumberValid(cardNumber)) {
+                isCardNumberValid = true;
+            }
+            if(cardNumber.equals("0")){
+                return;
+            }
+        }
+        String amountToTransfer;
+        boolean needsToRepeat = false;
+        do {
+            System.out.println("\nPlease write the amount you want to transfer");
+            amountToTransfer = scan.nextLine();
+            amountToTransfer=amountToTransfer.trim();
+            if (!isAmountInNumbers(amountToTransfer)) {
+                needsToRepeat = true;
+            } else {
+                needsToRepeat = Integer.parseInt(amountToTransfer) > loggedCard.getAccountBalance();
+            }
+            if(amountToTransfer.equals("0")){
+                return;
+            }
+        } while (needsToRepeat);
+
         int amountOfTheAccountThatsGoingToBeTransferedTheMoneyTo;
         int totalAmountOfUserThatIsGoingToReceiveMoney;
         try {
@@ -193,7 +241,7 @@ public class Main {
                     updatedResourceFile.add(concatenateSplitData(splitData));
                 } else if (splitData[1].equals(loggedCard.getCardNumber())) {
                     int newBalance = loggedCard.getAccountBalance() - Integer.parseInt(amountToTransfer);
-                    splitData[3] =newBalance+"";
+                    splitData[3] = newBalance + "";
                     updatedResourceFile.add(concatenateSplitData(splitData));
                 } else {
                     updatedResourceFile.add(data);
@@ -207,7 +255,11 @@ public class Main {
         }
     }
 
-    private static String concatenateSplitData(String[] splitData){
+    private static boolean isAmountInNumbers(String amountToTransfer) {
+        return amountToTransfer.matches("\\d+$");
+    }
+
+    private static String concatenateSplitData(String[] splitData) {
         String dataToWrite = "";
         for (int i = 0; i < splitData.length; i++) {
             dataToWrite = dataToWrite.concat(splitData[i] + "-");
