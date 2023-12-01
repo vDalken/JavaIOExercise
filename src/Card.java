@@ -1,3 +1,5 @@
+import java.util.Random;
+
 class Card {
     private final String name;
     private final String cardNumber;
@@ -13,6 +15,12 @@ class Card {
         this.isCardBlocked = isCardBlocked;
     }
 
+    public Card(String name) {
+        this.name = name;
+        this.cardNumber = getRandomCardNumber();
+        this.passcode = getRandomPasscode();
+    }
+
     public String getCardNumber() {
         return cardNumber;
     }
@@ -23,5 +31,21 @@ class Card {
 
     public String getName() {
         return name;
+    }
+
+    public String getPasscode() {
+        return passcode;
+    }
+
+    private String getRandomPasscode() {
+        Random random = new Random();
+        int randomNumber = random.nextInt(1000, 9999);
+        return randomNumber + "";
+    }
+
+    private String getRandomCardNumber() {
+        Random random = new Random();
+        int randomNumber = random.nextInt(100000, 999999);
+        return randomNumber + "";
     }
 }
