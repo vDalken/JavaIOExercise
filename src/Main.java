@@ -39,10 +39,8 @@ public class Main {
                     System.out.println();
                     ArrayList<String> info = new ArrayList<>();
                     if (fileHandler.isCardNumberValid(cardNumber, passcode)) {
-                        info = fileHandler.getCardInfo(cardNumber);
-                        boolean isCardBlocked = info.get(4).equals("true");
-                        loggedCard = new Card(info.get(0), cardNumber, info.get(2), Integer.parseInt(info.get(3)), isCardBlocked);
-                        System.out.println("Welcome " + info.get(0) + "\n");
+                        loggedCard = fileHandler.getCardInfo(cardNumber);
+                        System.out.println("Welcome " + loggedCard.getName() + "\n");
                     } else {
                         System.out.println("Account doesn't exist");
                     }

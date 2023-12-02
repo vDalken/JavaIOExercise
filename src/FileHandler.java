@@ -6,31 +6,31 @@ import java.util.ArrayList;
 
 class FileHandler {
     private String filePath;
+
     public FileHandler(String filePath) {
-        this.filePath=filePath;
+        this.filePath = filePath;
     }
 
     public void writeOnTheFile(String name, String cardNumber, String passcode) {
-        try {
-            FileWriter writer = new FileWriter(filePath, true);
+        try (FileWriter writer = new FileWriter(filePath, true)) {
             String dataToWrite = name + "-" + cardNumber + "-" + passcode + "-0-false\n";
             writer.append(dataToWrite);
-            writer.close();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error writing on the file: "+e.getMessage());
         }
     }
 
     public boolean isCardNumberValid(String cardNumber, String passcode) {
-        FileReader reader = null;
-        try {
-            reader = new FileReader(filePath);
+        try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
+
             String data = bufferedReader.readLine();
             while (data != null) {
                 String[] splitData = data.split("-");
-                if (splitData[1].equals(cardNumber) && splitData[2].equals(passcode)) {
-                    return true;
+                if (passcode == null) {
+                    if (hasCardNumber(splitData, cardNumber)) return true;
+                } else {
+                    if (hasCardNumberAndPasscode(splitData, cardNumber, passcode)) return true;
                 }
                 data = bufferedReader.readLine();
             }
@@ -40,61 +40,87 @@ class FileHandler {
         return false;
     }
 
-    public boolean isCardNumberValid(String cardNumber) {
-        FileReader reader = null;
-        try {
-            reader = new FileReader(filePath);
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            String data = bufferedReader.readLine();
-            while (data != null) {
-                String[] splitData = data.split("-");
-                if (splitData[1].equals(cardNumber)) {
-                    return true;
-                }
-                data = bufferedReader.readLine();
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
+    private boolean hasCardNumber(String[] splitData, String cardNumber) {
+        return splitData[1].equals(cardNumber);
     }
 
-    public ArrayList<String> getCardInfo(String cardNumber) {
-        FileReader reader;
-        ArrayList<String> arrayList = new ArrayList<>();
-        try {
-            reader = new FileReader(filePath);
+    private boolean hasCardNumberAndPasscode(String[] splitData, String cardNumber, String passcode) {
+        return splitData[1].equals(cardNumber) && splitData[2].equals(passcode);
+    }
+
+    public Card getCardInfo(String cardNumber) {
+        try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
             String data = bufferedReader.readLine();
             while (data != null) {
                 String[] splitData = data.split("-");
                 if (splitData[1].equals(cardNumber)) {
-                    arrayList.add(splitData[0]);
-                    arrayList.add(splitData[1]);
-                    arrayList.add(splitData[2]);
-                    arrayList.add(splitData[3]);
-                    arrayList.add(splitData[4]);
+                    return createCard(splitData);
                 }
                 data = bufferedReader.readLine();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return arrayList;
+        return null;
+    }
+
+    private Card createCard(String[] splitData) {
+        boolean isCardBlocked = splitData[4].equals("true");
+        return new Card(splitData[0], splitData[1], splitData[2], Integer.parseInt(splitData[3]), isCardBlocked);
     }
 
     public void updateFile(ArrayList<String> updatedResourceFile) {
-        try {
-            FileWriter rest = new FileWriter(filePath);
-            rest.write("");
-            rest.close();
-            FileWriter writer = new FileWriter(filePath, true);
-            for (int i = 0; i < updatedResourceFile.size(); i++) {
-                writer.append(updatedResourceFile.get(i)).append("\n");
+        try (FileWriter writer = new FileWriter(filePath)) {
+            for (String data : updatedResourceFile) {
+                writer.append(data).append("\n");
             }
-            writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void updateCardData(String cardNumber, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
+        try (FileReader reader = new FileReader(filePath)) {
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(cardNumber)) {
+                    handleCardNumberMatch(splitData, amountToTransfer, updatedResourceFile);
+                } else if (splitData[1].equals(loggedCard.getCardNumber())) {
+                    handleLoggedCardMatch(splitData, amountToTransfer, updatedResourceFile, loggedCard);
+                } else {
+                    updatedResourceFile.add(data);
+                }
+                data = bufferedReader.readLine();
+            }
+            updateFile(updatedResourceFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
+        }
+    }
+
+    private void handleCardNumberMatch(String[] splitData, String amountToTransfer, ArrayList<String> updatedResourceFile) {
+        int amountOfTheAccountThatsGoingToBeTransferredTheMoneyTo = Integer.parseInt(splitData[3]);
+        int totalAmountOfUserThatIsGoingToReceiveMoney = Integer.parseInt(amountToTransfer) + amountOfTheAccountThatsGoingToBeTransferredTheMoneyTo;
+        splitData[3] = String.valueOf(totalAmountOfUserThatIsGoingToReceiveMoney);
+        updatedResourceFile.add(concatenateSplitData(splitData));
+    }
+
+    private void handleLoggedCardMatch(String[] splitData, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
+        int newBalance = loggedCard.getAccountBalance() - Integer.parseInt(amountToTransfer);
+        splitData[3] = String.valueOf(newBalance);
+        updatedResourceFile.add(concatenateSplitData(splitData));
+    }
+
+    private String concatenateSplitData(String[] splitData) {
+        String dataToWrite = "";
+        for (int i = 0; i < splitData.length; i++) {
+            dataToWrite = dataToWrite.concat(splitData[i] + "-");
+        }
+        dataToWrite = dataToWrite.substring(0, dataToWrite.length() - 1);
+        return dataToWrite;
     }
 }
