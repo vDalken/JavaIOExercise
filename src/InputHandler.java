@@ -22,7 +22,7 @@ class InputHandler {
     public static String getAmountToTransfer(Card loggedCard) {
         Scanner scan = new Scanner(System.in);
         String amountToTransfer;
-        boolean needsToRepeat = false;
+        boolean needsToRepeat;
         do {
             System.out.println("\nPlease write the amount you want to transfer");
             amountToTransfer = scan.nextLine();

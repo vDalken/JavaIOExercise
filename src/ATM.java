@@ -6,16 +6,15 @@ import java.util.Scanner;
 
 class ATM {
     private Card loggedCard;
-    private String pathFile;
+    private final String PATH_FILE;
     public ATM(Card loggedCard, String pathFile) {
         this.loggedCard=loggedCard;
-        this.pathFile = pathFile;
+        this.PATH_FILE = pathFile;
     }
 
     public void transfer() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
-        Scanner scan = new Scanner(System.in);
-        FileHandler fileHandler = new FileHandler(pathFile);
+        FileHandler fileHandler = new FileHandler(PATH_FILE);
 
         if (loggedCard.getAccountBalance() == 0) {
             System.out.println("\nYou have to make a deposit first\n");

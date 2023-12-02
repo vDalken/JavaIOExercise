@@ -5,76 +5,85 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class Main {
-    static File resourceFile = new File("resources/text");
+    private static final String EXIT = "0";
+    private static final String CREATE_ACCOUNT = "1";
+    private static final String TRANSFER = "1";
+    private static final String WITHDRAWAL = "2";
+    private static final String DEPOSIT = "3";
+    private static final String BLOCK_CARD = "4";
+    private static final String LOGIN = "2";
+    private static final File RESOURCE_FILE = new File("resources/text");
 
     static Card loggedCard;
 
     public static void main(String[] args) {
         // OPEN AN INPUT STREAM WITH A FILE PATH AS THE SOURCE
         Scanner scan = new Scanner(System.in);
-        FileHandler fileHandler = new FileHandler(resourceFile.getPath());
-        Card newCard;
+        FileHandler fileHandler = new FileHandler(RESOURCE_FILE.getPath());
         String selectedOption;
-        String cardNumber;
-        String passcode;
-        String name = "";
         do {
             System.out.println("0. exit\n1. create account\n2. log in");
             selectedOption = scan.nextLine();
             switch (selectedOption) {
-                case "0":
+                case EXIT:
                     break;
-                case "1":
-                    System.out.println("write your name");
-                    name = scan.nextLine();
-                    newCard = new Card(name);
-                    fileHandler.writeOnTheFile(name, newCard.getCardNumber(), newCard.getPasscode());
+                case CREATE_ACCOUNT:
+                    createAccount(scan, fileHandler);
                     break;
-                case "2":
-                    System.out.println("write your card number");
-                    cardNumber = scan.nextLine();
-                    System.out.println();
-                    System.out.println("write your passcode");
-                    passcode = scan.nextLine();
-                    System.out.println();
-                    ArrayList<String> info = new ArrayList<>();
-                    if (fileHandler.isCardNumberValid(cardNumber, passcode)) {
-                        loggedCard = fileHandler.getCardInfo(cardNumber);
-                        System.out.println("Welcome " + loggedCard.getName() + "\n");
-                    } else {
-                        System.out.println("Account doesn't exist");
-                    }
-                    if (loggedCard != null) {
-                        showLoggedMenu();
-                    }
+                case LOGIN:
+                    login(scan, fileHandler);
                     break;
                 default:
                     System.out.println("\nPlease, type in a valid option\n");
                     break;
             }
-        } while (!selectedOption.equals("0"));
+        } while (!selectedOption.equals(EXIT));
+    }
 
+    private static void createAccount(Scanner scan, FileHandler fileHandler) {
+        System.out.println("write your name");
+        String name = scan.nextLine();
+        Card newCard = new Card(name);
+        fileHandler.writeOnTheFile(name, newCard.getCardNumber(), newCard.getPasscode());
+    }
+
+    private static void login(Scanner scan, FileHandler fileHandler) {
+        System.out.println("write your card number");
+        String cardNumber = scan.nextLine();
+        System.out.println();
+        System.out.println("write your passcode");
+        String passcode = scan.nextLine();
+        System.out.println();
+        if (fileHandler.isCardNumberValid(cardNumber, passcode)) {
+            loggedCard = fileHandler.getCardInfo(cardNumber);
+            System.out.println("Welcome " + loggedCard.getName() + "\n");
+        } else {
+            System.out.println("Account doesn't exist");
+        }
+        if (loggedCard != null) {
+            showLoggedMenu();
+        }
     }
 
     private static void showLoggedMenu() {
         String selectedOption;
         Scanner scan = new Scanner(System.in);
-        ATM atm = new ATM(loggedCard,resourceFile.getPath());
+        ATM atm = new ATM(loggedCard, RESOURCE_FILE.getPath());
         do {
             System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card");
             selectedOption = scan.nextLine();
             switch (selectedOption) {
-                case "0":
+                case EXIT:
                     System.out.println("You're going back to the main menu");
                     break;
-                case "1":
+                case TRANSFER:
                     atm.transfer();
                     break;
-                case "2":
+                case WITHDRAWAL:
                     break;
-                case "3":
+                case DEPOSIT:
                     break;
-                case "4":
+                case BLOCK_CARD:
                     break;
                 default:
                     System.out.println("You typed something that isn't valid as an option");
