@@ -18,7 +18,6 @@ public class Main {
     static Card loggedCard;
 
     public static void main(String[] args) {
-        // OPEN AN INPUT STREAM WITH A FILE PATH AS THE SOURCE
         Scanner scan = new Scanner(System.in);
         FileHandler fileHandler = new FileHandler(RESOURCE_FILE.getPath());
         String selectedOption;
@@ -78,7 +77,7 @@ public class Main {
             selectedOption = scan.nextLine();
             switch (selectedOption) {
                 case EXIT:
-                    System.out.println("You're going back to the main menu");
+                    System.out.println("\nYou're going back to the main menu\n");
                     break;
                 case TRANSFER:
                     atm.transfer();

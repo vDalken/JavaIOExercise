@@ -123,7 +123,7 @@ class FileHandler {
         updatedResourceFile.add(concatenateSplitData(splitData));
     }
 
-    private void handleCardNumberMatchBlockedCard(String[] splitData, ArrayList<String> updatedResourceFile){
+    private void handleCardNumberMatchBlockedCard(String[] splitData, ArrayList<String> updatedResourceFile) {
         splitData[4] = String.valueOf(true);
         updatedResourceFile.add(concatenateSplitData(splitData));
     }
@@ -183,7 +183,7 @@ class FileHandler {
         }
     }
 
-    public void updateBlockedCardData(ArrayList<String> updatedResourceFile, Card loggedCard){
+    public void updateBlockedCardData(ArrayList<String> updatedResourceFile, Card loggedCard) {
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -191,7 +191,7 @@ class FileHandler {
             while (data != null) {
                 String[] splitData = data.split("-");
                 if (splitData[1].equals(loggedCard.getCardNumber())) {
-                    handleCardNumberMatchBlockedCard(splitData,updatedResourceFile);
+                    handleCardNumberMatchBlockedCard(splitData, updatedResourceFile);
                 } else {
                     updatedResourceFile.add(data);
                 }
@@ -200,6 +200,16 @@ class FileHandler {
             updateFile(updatedResourceFile);
         } catch (IOException e) {
             throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
+        }
+    }
+
+    public void updatedAuditFile(String loggedCardNumber,String receiverCardNumber, String amountToTransfer, boolean isSucessful) {
+        try (FileWriter writer = new FileWriter(filePath, true)) {
+            String status = isSucessful ? "success" : "error";
+            String dataToWrite = loggedCardNumber+ "-" + receiverCardNumber + "-" + amountToTransfer + "-" + status + "\n";
+            writer.append(dataToWrite);
+        } catch (IOException e) {
+            System.out.println("Error on updating the file: " + e.getMessage());
         }
     }
 }

@@ -1,20 +1,15 @@
 import java.util.Scanner;
 
 class InputHandler {
-    public static String getCardNumber(FileHandler fileHandler) {
+    public static String getCardNumber() {
         Scanner scan = new Scanner(System.in);
-        boolean isCardNumberValid = false;
         String cardNumber = "";
-        while (!isCardNumberValid) {
-            System.out.println("\nPlease write the card number");
-            cardNumber = scan.nextLine();
-            cardNumber = cardNumber.trim();
-            if ((fileHandler.isCardNumberValid(cardNumber,null))) {
-                isCardNumberValid = true;
-            }
-            if (cardNumber.equals("0")) {
-                return null;
-            }
+
+        System.out.println("\nPlease write the card number");
+        cardNumber = scan.nextLine();
+        cardNumber = cardNumber.trim();
+        if (cardNumber.equals("0")) {
+            return null;
         }
         return cardNumber;
     }
@@ -39,15 +34,34 @@ class InputHandler {
         return amount;
     }
 
-    public static boolean doesWantTheCardBlock(){
+    public static String getAmountToTransfer(Card loggedCard) {
+        Scanner scan = new Scanner(System.in);
+        String amount;
+        boolean needsToRepeat = false;
+        do {
+            System.out.println("\nPlease write the amount");
+            amount = scan.nextLine();
+            amount = amount.trim();
+            if (!isAmountInNumbers(amount)) {
+                needsToRepeat = true;
+                System.out.println("\nPlease write a number");
+            }
+            if (amount.equals("0")) {
+                return null;
+            }
+        } while (needsToRepeat);
+        return amount;
+    }
+
+    public static boolean doesWantTheCardBlock() {
         Scanner scan = new Scanner(System.in);
         System.out.println("\nYou wont be able to login anymore and you'll have to get a new one");
         System.out.println("\nDo you want your card blocked?");
         String doesWantTheCardBlocked = scan.nextLine();
         doesWantTheCardBlocked = doesWantTheCardBlocked.trim();
         boolean does = false;
-        if(isInBoolean(doesWantTheCardBlocked)){
-            does= Boolean.parseBoolean(doesWantTheCardBlocked);
+        if (isInBoolean(doesWantTheCardBlocked)) {
+            does = Boolean.parseBoolean(doesWantTheCardBlocked);
         }
         return does;
     }
@@ -56,7 +70,7 @@ class InputHandler {
         return amountToTransfer.matches("\\d+$");
     }
 
-    private static boolean isInBoolean(String string){
+    private static boolean isInBoolean(String string) {
         return string.matches("true|false");
     }
 }
