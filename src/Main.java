@@ -83,8 +83,10 @@ public class Main {
                     atm.withdrawal();
                     break;
                 case DEPOSIT:
+                    atm.deposit();
                     break;
                 case BLOCK_CARD:
+                    atm.blockCard();
                     break;
                 default:
                     System.out.println("You typed something that isn't valid as an option");

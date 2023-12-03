@@ -39,6 +39,13 @@ class InputHandler {
         return amount;
     }
 
+    public static boolean doesWantTheCardBlock(){
+        Scanner scan = new Scanner(System.in);
+        System.out.println("You want be able to login anymore and you'll have to get a new one\n");
+        System.out.println("\nDo you want your card blocked?");
+        return scan.nextBoolean();
+    }
+
     private static boolean isAmountInNumbers(String amountToTransfer) {
         return amountToTransfer.matches("\\d+$");
     }

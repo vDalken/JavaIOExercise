@@ -61,10 +61,21 @@ class ATM {
         FileHandler fileHandler = new FileHandler(PATH_FILE);
 
         String amountToDeposit = InputHandler.getAmount(loggedCard);
-        if(amountToDeposit==null){
+        if (amountToDeposit == null) {
             return;
         }
 
-        fileHandler.updateCardData();
+        fileHandler.updateDepositCardData(amountToDeposit, updatedResourceFile, loggedCard);
+
+        System.out.println("\nDeposit was successful!\n");
+    }
+
+    public void blockCard() {
+        ArrayList<String> updatedResourceFile = new ArrayList<>();
+        FileHandler fileHandler = new FileHandler(PATH_FILE);
+
+        boolean doesWantTheCardBlocked = InputHandler.doesWantTheCardBlock();
+
+
     }
 }
