@@ -16,7 +16,7 @@ class FileHandler {
             String dataToWrite = name + "-" + cardNumber + "-" + passcode + "-0-false\n";
             writer.append(dataToWrite);
         } catch (IOException e) {
-            System.out.println("Error writing on the file: "+e.getMessage());
+            System.out.println("Error writing on the file: " + e.getMessage());
         }
     }
 
@@ -80,7 +80,7 @@ class FileHandler {
         }
     }
 
-    public void updateCardData(String cardNumber, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
+    public void updateTransferCardData(String cardNumber, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -109,6 +109,13 @@ class FileHandler {
         updatedResourceFile.add(concatenateSplitData(splitData));
     }
 
+    private void handleCardNumberMatchWithdrawal(String[] splitData, String amountToWithdraw, ArrayList<String> updatedResourceFile){
+        int accountBalance = Integer.parseInt(splitData[3]);
+        int newAccountBalance = accountBalance- Integer.parseInt(amountToWithdraw);
+        splitData[3] = String.valueOf(newAccountBalance);
+        updatedResourceFile.add(concatenateSplitData(splitData));
+    }
+
     private void handleLoggedCardMatch(String[] splitData, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
         int newBalance = loggedCard.getAccountBalance() - Integer.parseInt(amountToTransfer);
         splitData[3] = String.valueOf(newBalance);
@@ -122,5 +129,29 @@ class FileHandler {
         }
         dataToWrite = dataToWrite.substring(0, dataToWrite.length() - 1);
         return dataToWrite;
+    }
+
+    public void updateWithdrawalCardData(String amountToWithdraw, ArrayList<String> updatedResourceFile, Card loggedCard) {
+        try (FileReader reader = new FileReader(filePath)) {
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(loggedCard.getCardNumber())) {
+                    handleCardNumberMatchWithdrawal(splitData,amountToWithdraw,updatedResourceFile);
+                }  else {
+                    updatedResourceFile.add(data);
+                }
+                data = bufferedReader.readLine();
+            }
+            updateFile(updatedResourceFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
+        }
+    }
+
+    public void updateDepositCardData(){
+
     }
 }

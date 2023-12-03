@@ -19,24 +19,24 @@ class InputHandler {
         return cardNumber;
     }
 
-    public static String getAmountToTransfer(Card loggedCard) {
+    public static String getAmount(Card loggedCard) {
         Scanner scan = new Scanner(System.in);
-        String amountToTransfer;
+        String amount;
         boolean needsToRepeat;
         do {
-            System.out.println("\nPlease write the amount you want to transfer");
-            amountToTransfer = scan.nextLine();
-            amountToTransfer = amountToTransfer.trim();
-            if (!isAmountInNumbers(amountToTransfer)) {
+            System.out.println("\nPlease write the amount");
+            amount = scan.nextLine();
+            amount = amount.trim();
+            if (!isAmountInNumbers(amount)) {
                 needsToRepeat = true;
             } else {
-                needsToRepeat = Integer.parseInt(amountToTransfer) > loggedCard.getAccountBalance();
+                needsToRepeat = Integer.parseInt(amount) > loggedCard.getAccountBalance();
             }
-            if (amountToTransfer.equals("0")) {
+            if (amount.equals("0")) {
                 return null;
             }
         } while (needsToRepeat);
-        return amountToTransfer;
+        return amount;
     }
 
     private static boolean isAmountInNumbers(String amountToTransfer) {

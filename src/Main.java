@@ -80,6 +80,7 @@ public class Main {
                     atm.transfer();
                     break;
                 case WITHDRAWAL:
+                    atm.withdrawal();
                     break;
                 case DEPOSIT:
                     break;
