@@ -11,6 +11,7 @@ public class Main {
     private static final String WITHDRAWAL = "2";
     private static final String DEPOSIT = "3";
     private static final String BLOCK_CARD = "4";
+    private static final String CARD_INFO = "5";
     private static final String LOGIN = "2";
     private static final File RESOURCE_FILE = new File("resources/text");
 
@@ -44,6 +45,8 @@ public class Main {
         System.out.println("write your name");
         String name = scan.nextLine();
         Card newCard = new Card(name);
+        System.out.println("\nYour Card Number: " + newCard.getCardNumber());
+        System.out.println("\nYour Passcode: "+ newCard.getPasscode() + "\n");
         fileHandler.writeOnTheFile(name, newCard.getCardNumber(), newCard.getPasscode());
     }
 
@@ -58,7 +61,8 @@ public class Main {
             loggedCard = fileHandler.getCardInfo(cardNumber);
             System.out.println("Welcome " + loggedCard.getName() + "\n");
         } else {
-            System.out.println("Account doesn't exist");
+            System.out.println("\nAccount with those details doesn't exist");
+            System.out.println("Make sure you're typing in the right card number and passcode\n");
         }
         if (loggedCard != null) {
             showLoggedMenu();
@@ -70,7 +74,7 @@ public class Main {
         Scanner scan = new Scanner(System.in);
         ATM atm = new ATM(loggedCard, RESOURCE_FILE.getPath());
         do {
-            System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card");
+            System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card\n5. Card Info");
             selectedOption = scan.nextLine();
             switch (selectedOption) {
                 case EXIT:
@@ -87,6 +91,9 @@ public class Main {
                     break;
                 case BLOCK_CARD:
                     atm.blockCard();
+                    break;
+                case CARD_INFO:
+                    atm.showCardInfo();
                     break;
                 default:
                     System.out.println("You typed something that isn't valid as an option");

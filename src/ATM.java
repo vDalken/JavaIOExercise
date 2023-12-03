@@ -82,4 +82,10 @@ class ATM {
             System.out.println("\nBecause you didn't give us a definitive answer, we didn't block your card\n");
         }
     }
+
+    public void showCardInfo(){
+        System.out.println("Name: " + loggedCard.getName());
+        System.out.println("Card Number: "+ loggedCard.getCardNumber());
+        System.out.println("Passcode : " + loggedCard.getPasscode());
+    }
 }
