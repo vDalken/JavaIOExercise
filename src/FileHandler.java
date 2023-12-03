@@ -123,6 +123,11 @@ class FileHandler {
         updatedResourceFile.add(concatenateSplitData(splitData));
     }
 
+    private void handleCardNumberMatchBlockedCard(String[] splitData, ArrayList<String> updatedResourceFile){
+        splitData[4] = String.valueOf(true);
+        updatedResourceFile.add(concatenateSplitData(splitData));
+    }
+
     private void handleLoggedCardMatch(String[] splitData, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
         int newBalance = loggedCard.getAccountBalance() - Integer.parseInt(amountToTransfer);
         splitData[3] = String.valueOf(newBalance);
@@ -178,5 +183,23 @@ class FileHandler {
         }
     }
 
+    public void updateBlockedCardData(ArrayList<String> updatedResourceFile, Card loggedCard){
+        try (FileReader reader = new FileReader(filePath)) {
+            BufferedReader bufferedReader = new BufferedReader(reader);
 
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(loggedCard.getCardNumber())) {
+                    handleCardNumberMatchBlockedCard(splitData,updatedResourceFile);
+                } else {
+                    updatedResourceFile.add(data);
+                }
+                data = bufferedReader.readLine();
+            }
+            updateFile(updatedResourceFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
+        }
+    }
 }

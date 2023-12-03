@@ -41,7 +41,7 @@ class InputHandler {
 
     public static boolean doesWantTheCardBlock(){
         Scanner scan = new Scanner(System.in);
-        System.out.println("You want be able to login anymore and you'll have to get a new one\n");
+        System.out.println("\nYou wont be able to login anymore and you'll have to get a new one");
         System.out.println("\nDo you want your card blocked?");
         return scan.nextBoolean();
     }

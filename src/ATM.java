@@ -75,7 +75,8 @@ class ATM {
         FileHandler fileHandler = new FileHandler(PATH_FILE);
 
         boolean doesWantTheCardBlocked = InputHandler.doesWantTheCardBlock();
-
-
+        if (doesWantTheCardBlocked) {
+            fileHandler.updateBlockedCardData(updatedResourceFile,loggedCard);
+        }
     }
 }
