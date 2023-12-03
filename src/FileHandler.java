@@ -80,7 +80,7 @@ class FileHandler {
         }
     }
 
-    public void updateTransferCardData(String cardNumber, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
+    public void performTransfer(String cardNumber, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -143,7 +143,7 @@ class FileHandler {
         return dataToWrite;
     }
 
-    public void updateWithdrawalCardData(String amountToWithdraw, ArrayList<String> updatedResourceFile, Card loggedCard) {
+    public void performWithdrawal(String amountToWithdraw, ArrayList<String> updatedResourceFile, Card loggedCard) {
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -163,7 +163,7 @@ class FileHandler {
         }
     }
 
-    public void updateDepositCardData(String amountToDeposit, ArrayList<String> updatedResourceFile, Card loggedCard) {
+    public void performDeposit(String amountToDeposit, ArrayList<String> updatedResourceFile, Card loggedCard) {
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -183,7 +183,7 @@ class FileHandler {
         }
     }
 
-    public void updateBlockedCardData(ArrayList<String> updatedResourceFile, Card loggedCard) {
+    public void blockCard(ArrayList<String> updatedResourceFile, Card loggedCard) {
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 

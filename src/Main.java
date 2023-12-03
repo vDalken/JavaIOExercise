@@ -1,8 +1,5 @@
 import java.io.*;
-import java.nio.Buffer;
-import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Random;
 
 public class Main {
     private static final String EXIT = "0";
@@ -20,11 +17,11 @@ public class Main {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         FileHandler fileHandler = new FileHandler(RESOURCE_FILE.getPath());
-        String selectedOption;
+        String userChoice;
         do {
             System.out.println("0. exit\n1. create account\n2. log in");
-            selectedOption = scan.nextLine();
-            switch (selectedOption) {
+            userChoice = scan.nextLine();
+            switch (userChoice) {
                 case EXIT:
                     break;
                 case CREATE_ACCOUNT:
@@ -37,7 +34,7 @@ public class Main {
                     System.out.println("\nPlease, type in a valid option\n");
                     break;
             }
-        } while (!selectedOption.equals(EXIT));
+        } while (!userChoice.equals(EXIT));
     }
 
     private static void createAccount(Scanner scan, FileHandler fileHandler) {
@@ -69,13 +66,13 @@ public class Main {
     }
 
     private static void showLoggedMenu() {
-        String selectedOption;
+        String userChoice;
         Scanner scan = new Scanner(System.in);
         ATM atm = new ATM(loggedCard, RESOURCE_FILE.getPath());
         do {
             System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card\n5. Card Info");
-            selectedOption = scan.nextLine();
-            switch (selectedOption) {
+            userChoice = scan.nextLine();
+            switch (userChoice) {
                 case EXIT:
                     System.out.println("\nYou're going back to the main menu\n");
                     break;
@@ -98,6 +95,6 @@ public class Main {
                     System.out.println("You typed something that isn't valid as an option");
                     break;
             }
-        } while (!selectedOption.equals("0"));
+        } while (!userChoice.equals("0"));
     }
 }
