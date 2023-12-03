@@ -77,6 +77,9 @@ class ATM {
         boolean doesWantTheCardBlocked = InputHandler.doesWantTheCardBlock();
         if (doesWantTheCardBlocked) {
             fileHandler.updateBlockedCardData(updatedResourceFile,loggedCard);
+            System.out.println("\nCard was blocked successfully!");
+        }else{
+            System.out.println("\nBecause you didn't give us a definitive answer, we didn't block your card\n");
         }
     }
 }

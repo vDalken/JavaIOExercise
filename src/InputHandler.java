@@ -43,10 +43,20 @@ class InputHandler {
         Scanner scan = new Scanner(System.in);
         System.out.println("\nYou wont be able to login anymore and you'll have to get a new one");
         System.out.println("\nDo you want your card blocked?");
-        return scan.nextBoolean();
+        String doesWantTheCardBlocked = scan.nextLine();
+        doesWantTheCardBlocked = doesWantTheCardBlocked.trim();
+        boolean does = false;
+        if(isInBoolean(doesWantTheCardBlocked)){
+            does= Boolean.parseBoolean(doesWantTheCardBlocked);
+        }
+        return does;
     }
 
     private static boolean isAmountInNumbers(String amountToTransfer) {
         return amountToTransfer.matches("\\d+$");
+    }
+
+    private static boolean isInBoolean(String string){
+        return string.matches("true|false");
     }
 }
