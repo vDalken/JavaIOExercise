@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 class FileHandler {
-    private String filePath;
+    private final String FILE_PATH;
 
     public FileHandler(String filePath) {
-        this.filePath = filePath;
+        this.FILE_PATH = filePath;
     }
 
     public void writeOnTheFile(String name, String cardNumber, String passcode) {
-        try (FileWriter writer = new FileWriter(filePath, true)) {
+        try (FileWriter writer = new FileWriter(FILE_PATH, true)) {
             String dataToWrite = name + "-" + cardNumber + "-" + passcode + "-0-false\n";
             writer.append(dataToWrite);
         } catch (IOException e) {
@@ -21,7 +21,7 @@ class FileHandler {
     }
 
     public boolean isCardNumberValid(String cardNumber, String passcode) {
-        try (FileReader reader = new FileReader(filePath)) {
+        try (FileReader reader = new FileReader(FILE_PATH)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 
             String data = bufferedReader.readLine();
@@ -40,16 +40,8 @@ class FileHandler {
         return false;
     }
 
-    private boolean hasCardNumber(String[] splitData, String cardNumber) {
-        return splitData[1].equals(cardNumber);
-    }
-
-    private boolean hasCardNumberAndPasscode(String[] splitData, String cardNumber, String passcode) {
-        return splitData[1].equals(cardNumber) && splitData[2].equals(passcode);
-    }
-
     public Card getCardInfo(String cardNumber) {
-        try (FileReader reader = new FileReader(filePath)) {
+        try (FileReader reader = new FileReader(FILE_PATH)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
             String data = bufferedReader.readLine();
             while (data != null) {
@@ -65,13 +57,8 @@ class FileHandler {
         return null;
     }
 
-    private Card createCard(String[] splitData) {
-        boolean isCardBlocked = splitData[4].equals("true");
-        return new Card(splitData[0], splitData[1], splitData[2], Integer.parseInt(splitData[3]), isCardBlocked);
-    }
-
     public void updateFile(ArrayList<String> updatedResourceFile) {
-        try (FileWriter writer = new FileWriter(filePath)) {
+        try (FileWriter writer = new FileWriter(FILE_PATH)) {
             for (String data : updatedResourceFile) {
                 writer.append(data).append("\n");
             }
@@ -81,7 +68,7 @@ class FileHandler {
     }
 
     public void performTransfer(String cardNumber, String amountToTransfer, ArrayList<String> updatedResourceFile, Card loggedCard) {
-        try (FileReader reader = new FileReader(filePath)) {
+        try (FileReader reader = new FileReader(FILE_PATH)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
 
             String data = bufferedReader.readLine();
@@ -102,9 +89,82 @@ class FileHandler {
         }
     }
 
+    public void performWithdrawal(String amountToWithdraw, ArrayList<String> updatedResourceFile, Card loggedCard) {
+        try (FileReader reader = new FileReader(FILE_PATH)) {
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(loggedCard.getCardNumber())) {
+                    handleCardNumberMatchWithdrawal(splitData, amountToWithdraw, updatedResourceFile);
+                } else {
+                    updatedResourceFile.add(data);
+                }
+                data = bufferedReader.readLine();
+            }
+            updateFile(updatedResourceFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
+        }
+    }
+
+    public void performDeposit(String amountToDeposit, ArrayList<String> updatedResourceFile, Card loggedCard) {
+        try (FileReader reader = new FileReader(FILE_PATH)) {
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(loggedCard.getCardNumber())) {
+                    handleCardNumberMatchDeposit(splitData, amountToDeposit, updatedResourceFile);
+                } else {
+                    updatedResourceFile.add(data);
+                }
+                data = bufferedReader.readLine();
+            }
+            updateFile(updatedResourceFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
+        }
+    }
+
+    public void blockCard(ArrayList<String> updatedResourceFile, Card loggedCard) {
+        try (FileReader reader = new FileReader(FILE_PATH)) {
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
+            String data = bufferedReader.readLine();
+            while (data != null) {
+                String[] splitData = data.split("-");
+                if (splitData[1].equals(loggedCard.getCardNumber())) {
+                    handleCardNumberMatchBlockedCard(splitData, updatedResourceFile);
+                } else {
+                    updatedResourceFile.add(data);
+                }
+                data = bufferedReader.readLine();
+            }
+            updateFile(updatedResourceFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
+        }
+    }
+
+    private boolean hasCardNumber(String[] splitData, String cardNumber) {
+        return splitData[1].equals(cardNumber);
+    }
+
+    private boolean hasCardNumberAndPasscode(String[] splitData, String cardNumber, String passcode) {
+        return splitData[1].equals(cardNumber) && splitData[2].equals(passcode);
+    }
+
+    private Card createCard(String[] splitData) {
+        boolean isCardBlocked = splitData[4].equals("true");
+        return new Card(splitData[0], splitData[1], splitData[2], Integer.parseInt(splitData[3]), isCardBlocked);
+    }
+
     private void handleCardNumberMatch(String[] splitData, String amountToTransfer, ArrayList<String> updatedResourceFile) {
-        int amountOfTheAccountThatsGoingToBeTransferredTheMoneyTo = Integer.parseInt(splitData[3]);
-        int totalAmountOfUserThatIsGoingToReceiveMoney = Integer.parseInt(amountToTransfer) + amountOfTheAccountThatsGoingToBeTransferredTheMoneyTo;
+        int amountOfTheAccountThatIsGoingToBeTransferredTheMoneyTo = Integer.parseInt(splitData[3]);
+        int totalAmountOfUserThatIsGoingToReceiveMoney = Integer.parseInt(amountToTransfer) + amountOfTheAccountThatIsGoingToBeTransferredTheMoneyTo;
         splitData[3] = String.valueOf(totalAmountOfUserThatIsGoingToReceiveMoney);
         updatedResourceFile.add(concatenateSplitData(splitData));
     }
@@ -136,80 +196,10 @@ class FileHandler {
 
     private String concatenateSplitData(String[] splitData) {
         String dataToWrite = "";
-        for (int i = 0; i < splitData.length; i++) {
-            dataToWrite = dataToWrite.concat(splitData[i] + "-");
+        for(String data : splitData){
+            dataToWrite = dataToWrite.concat(data + "-");
         }
         dataToWrite = dataToWrite.substring(0, dataToWrite.length() - 1);
         return dataToWrite;
-    }
-
-    public void performWithdrawal(String amountToWithdraw, ArrayList<String> updatedResourceFile, Card loggedCard) {
-        try (FileReader reader = new FileReader(filePath)) {
-            BufferedReader bufferedReader = new BufferedReader(reader);
-
-            String data = bufferedReader.readLine();
-            while (data != null) {
-                String[] splitData = data.split("-");
-                if (splitData[1].equals(loggedCard.getCardNumber())) {
-                    handleCardNumberMatchWithdrawal(splitData, amountToWithdraw, updatedResourceFile);
-                } else {
-                    updatedResourceFile.add(data);
-                }
-                data = bufferedReader.readLine();
-            }
-            updateFile(updatedResourceFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
-        }
-    }
-
-    public void performDeposit(String amountToDeposit, ArrayList<String> updatedResourceFile, Card loggedCard) {
-        try (FileReader reader = new FileReader(filePath)) {
-            BufferedReader bufferedReader = new BufferedReader(reader);
-
-            String data = bufferedReader.readLine();
-            while (data != null) {
-                String[] splitData = data.split("-");
-                if (splitData[1].equals(loggedCard.getCardNumber())) {
-                    handleCardNumberMatchDeposit(splitData, amountToDeposit, updatedResourceFile);
-                } else {
-                    updatedResourceFile.add(data);
-                }
-                data = bufferedReader.readLine();
-            }
-            updateFile(updatedResourceFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
-        }
-    }
-
-    public void blockCard(ArrayList<String> updatedResourceFile, Card loggedCard) {
-        try (FileReader reader = new FileReader(filePath)) {
-            BufferedReader bufferedReader = new BufferedReader(reader);
-
-            String data = bufferedReader.readLine();
-            while (data != null) {
-                String[] splitData = data.split("-");
-                if (splitData[1].equals(loggedCard.getCardNumber())) {
-                    handleCardNumberMatchBlockedCard(splitData, updatedResourceFile);
-                } else {
-                    updatedResourceFile.add(data);
-                }
-                data = bufferedReader.readLine();
-            }
-            updateFile(updatedResourceFile);
-        } catch (IOException e) {
-            throw new RuntimeException("Error when trying to update card data: " + e.getMessage());
-        }
-    }
-
-    public void updatedAuditFile(String loggedCardNumber,String receiverCardNumber, String amountToTransfer, boolean isSucessful) {
-        try (FileWriter writer = new FileWriter(filePath, true)) {
-            String status = isSucessful ? "success" : "error";
-            String dataToWrite = loggedCardNumber+ "-" + receiverCardNumber + "-" + amountToTransfer + "-" + status + "\n";
-            writer.append(dataToWrite);
-        } catch (IOException e) {
-            System.out.println("Error on updating the file: " + e.getMessage());
-        }
     }
 }
