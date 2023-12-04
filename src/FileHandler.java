@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-class FileHandler {
+class FileHandler implements UsersRepository{
     private final String FILE_PATH;
 
     public FileHandler(String filePath) {
