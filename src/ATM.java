@@ -1,3 +1,6 @@
+import customexceptions.NoBalanceException;
+import customexceptions.OperationCancelledException;
+
 import java.util.ArrayList;
 
 class ATM {
@@ -16,18 +19,17 @@ class ATM {
         AuditFileHandler auditFileHandler = new AuditFileHandler("resources/audit");
 
         if (loggedCard.getAccountBalance() == 0) {
-            System.out.println("\nYou have to make a deposit first\n");
-            return;
+            throw new NoBalanceException();
         }
 
         String cardNumber = InputHandler.getCardNumber();
         if (cardNumber == null) {
-            return;
+            throw new OperationCancelledException();
         }
 
         String amountToTransfer = InputHandler.getAmountToTransfer(loggedCard);
         if (amountToTransfer == null) {
-            return;
+            throw new OperationCancelledException();
         }
 
         if (Integer.parseInt(amountToTransfer) > loggedCard.getAccountBalance() || !(fileHandler.isCardNumberValid(cardNumber, null))) {
@@ -50,7 +52,7 @@ class ATM {
 
         String amountToWithdraw = InputHandler.getAmount(loggedCard);
         if (amountToWithdraw == null) {
-            return;
+            throw new OperationCancelledException();
         }
 
         fileHandler.performWithdrawal(amountToWithdraw, updatedResourceFile, loggedCard);
@@ -63,7 +65,7 @@ class ATM {
 
         String amountToDeposit = InputHandler.getAmount(loggedCard);
         if (amountToDeposit == null) {
-            return;
+            throw new OperationCancelledException();
         }
 
         fileHandler.performDeposit(amountToDeposit, updatedResourceFile, loggedCard);

@@ -1,3 +1,5 @@
+import customexceptions.CardInfoNotFoundException;
+
 import java.io.*;
 import java.util.Scanner;
 
@@ -43,7 +45,7 @@ public class Main {
         Card newCard = new Card(name);
         System.out.println("\nYour Card Number: " + newCard.getCardNumber());
         System.out.println("\nYour Passcode: "+ newCard.getPasscode() + "\n");
-        fileHandler.writeOnTheFile(name, newCard.getCardNumber(), newCard.getPasscode());
+        fileHandler.createAccount(name, newCard.getCardNumber(), newCard.getPasscode());
     }
 
     private static void login(Scanner scan, FileHandler fileHandler) {
@@ -57,8 +59,7 @@ public class Main {
             loggedCard = fileHandler.getCardInfo(cardNumber);
             System.out.println("Welcome " + loggedCard.getName() + "\n");
         } else {
-            System.out.println("\nAccount with those details doesn't exist");
-            System.out.println("Make sure you're typing in the right card number and passcode\n");
+            throw new CardInfoNotFoundException();
         }
         if (loggedCard != null) {
             showLoggedMenu();

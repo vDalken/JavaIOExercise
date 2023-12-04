@@ -11,12 +11,12 @@ class FileHandler {
         this.FILE_PATH = filePath;
     }
 
-    public void writeOnTheFile(String name, String cardNumber, String passcode) {
+    public void createAccount(String name, String cardNumber, String passcode) {
         try (FileWriter writer = new FileWriter(FILE_PATH, true)) {
             String dataToWrite = name + "-" + cardNumber + "-" + passcode + "-0-false\n";
             writer.append(dataToWrite);
         } catch (IOException e) {
-            System.out.println("Error writing on the file: " + e.getMessage());
+            throw new RuntimeException("Error when trying to create an account: " + e.getMessage());
         }
     }
 
@@ -35,7 +35,7 @@ class FileHandler {
                 data = bufferedReader.readLine();
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException("Error when trying to check if a card number is valid: " + e.getMessage());
         }
         return false;
     }
@@ -52,7 +52,7 @@ class FileHandler {
                 data = bufferedReader.readLine();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error when trying to get card info: " + e.getMessage());
         }
         return null;
     }
@@ -63,7 +63,7 @@ class FileHandler {
                 writer.append(data).append("\n");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("An error has occurred while processing data",e);
         }
     }
 
