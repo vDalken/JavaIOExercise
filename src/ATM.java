@@ -5,13 +5,11 @@ import java.util.ArrayList;
 
 class ATM {
     private Card loggedCard;
-    private final String USER_INFO_PATH_FILE;
     private final FileHandler fileHandler;
 
     public ATM(Card loggedCard, String userInfoPathFile) {
         this.loggedCard = loggedCard;
-        this.USER_INFO_PATH_FILE = userInfoPathFile;
-        this.fileHandler = new FileHandler(USER_INFO_PATH_FILE);
+        this.fileHandler = new FileHandler(userInfoPathFile);
     }
 
     public void transfer() {
