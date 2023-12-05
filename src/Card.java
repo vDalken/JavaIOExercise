@@ -1,9 +1,9 @@
 import java.util.Random;
 
-class Card {
+public class Card {
     private final String name;
     private final String cardNumber;
-    private String passcode;
+    private final String passcode;
     private int accountBalance;
     private boolean isCardBlocked;
 

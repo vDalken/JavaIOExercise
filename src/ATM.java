@@ -20,22 +20,22 @@ class ATM {
             throw new NoBalanceException();
         }
 
-        String cardNumber = InputHandler.getCardNumber();
+        String cardNumber = InputHelper.getCardNumber();
         if (cardNumber == null) {
             throw new OperationCancelledException();
         }
 
-        String amountToTransfer = InputHandler.getAmountToTransfer(loggedCard);
+        String amountToTransfer = InputHelper.getAmountToTransfer(loggedCard);
         if (amountToTransfer == null) {
             throw new OperationCancelledException();
         }
 
         if (Integer.parseInt(amountToTransfer) > loggedCard.getAccountBalance() || !(fileHandler.isCardNumberValid(cardNumber, null))) {
             System.out.println("\nThere was an error when trying to complete the transaction\n");
-            auditFileHandler.updateAuditFile(loggedCard.getCardNumber(), cardNumber, amountToTransfer, false);
+            auditFileHandler.addAuditLog(loggedCard.getCardNumber(), cardNumber, amountToTransfer, false);
         } else {
             fileHandler.performTransfer(cardNumber, amountToTransfer, updatedResourceFile, loggedCard);
-            auditFileHandler.updateAuditFile(loggedCard.getCardNumber(),cardNumber,amountToTransfer,true);
+            auditFileHandler.addAuditLog(loggedCard.getCardNumber(),cardNumber,amountToTransfer,true);
             System.out.println("\nTransfer was a success!\n");
         }
     }
@@ -48,7 +48,7 @@ class ATM {
             return;
         }
 
-        String amountToWithdraw = InputHandler.getAmount(loggedCard);
+        String amountToWithdraw = InputHelper.getAmount(loggedCard);
         if (amountToWithdraw == null) {
             throw new OperationCancelledException();
         }
@@ -61,7 +61,7 @@ class ATM {
     public void deposit() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
 
-        String amountToDeposit = InputHandler.getAmount(loggedCard);
+        String amountToDeposit = InputHelper.getAmount(loggedCard);
         if (amountToDeposit == null) {
             throw new OperationCancelledException();
         }
@@ -74,7 +74,7 @@ class ATM {
     public void blockCard() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
 
-        boolean doesWantTheCardBlocked = InputHandler.doesWantTheCardBlock();
+        boolean doesWantTheCardBlocked = InputHelper.doesWantTheCardBlock();
         if (doesWantTheCardBlocked) {
             fileHandler.blockCard(updatedResourceFile, loggedCard);
             System.out.println("\nCard was blocked successfully!");
