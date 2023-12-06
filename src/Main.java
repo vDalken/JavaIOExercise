@@ -1,4 +1,6 @@
 import customexceptions.CardInfoNotFoundException;
+import customexceptions.NoBalanceException;
+import customexceptions.OperationCancelledException;
 
 import java.io.*;
 import java.util.Scanner;
@@ -23,18 +25,24 @@ public class Main {
         do {
             System.out.println("0. exit\n1. create account\n2. log in");
             userChoice = scan.nextLine();
-            switch (userChoice) {
-                case EXIT:
-                    break;
-                case CREATE_ACCOUNT:
-                    createAccount(scan, fileHandler);
-                    break;
-                case LOGIN:
-                    login(scan, fileHandler);
-                    break;
-                default:
-                    System.out.println("\nPlease, type in a valid option\n");
-                    break;
+            try {
+                switch (userChoice) {
+                    case EXIT:
+                        break;
+                    case CREATE_ACCOUNT:
+                        createAccount(scan, fileHandler);
+                        break;
+                    case LOGIN:
+                        login(scan, fileHandler);
+                        break;
+                    default:
+                        System.out.println("\nPlease, type in a valid option\n");
+                        break;
+                }
+            }catch(CardInfoNotFoundException e){
+                System.out.println("Error: "+ e.getMessage());
+            }catch(Exception e){
+                System.out.println("Unexpected error: "+ e.getMessage());
             }
         } while (!userChoice.equals(EXIT));
     }
@@ -44,7 +52,7 @@ public class Main {
         String name = scan.nextLine();
         Card newCard = new Card(name);
         System.out.println("\nYour Card Number: " + newCard.getCardNumber());
-        System.out.println("\nYour Passcode: "+ newCard.getPasscode() + "\n");
+        System.out.println("\nYour Passcode: " + newCard.getPasscode() + "\n");
         fileHandler.createAccount(name, newCard.getCardNumber(), newCard.getPasscode());
     }
 
@@ -70,32 +78,40 @@ public class Main {
         String userChoice;
         Scanner scan = new Scanner(System.in);
         ATM atm = new ATM(loggedCard, RESOURCE_FILE.getPath());
+
         do {
             System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card\n5. Card Info");
             userChoice = scan.nextLine();
-            switch (userChoice) {
-                case EXIT:
-                    System.out.println("\nYou're going back to the main menu\n");
-                    break;
-                case TRANSFER:
-                    atm.transfer();
-                    break;
-                case WITHDRAWAL:
-                    atm.withdrawal();
-                    break;
-                case DEPOSIT:
-                    atm.deposit();
-                    break;
-                case BLOCK_CARD:
-                    atm.blockCard();
-                    break;
-                case CARD_INFO:
-                    atm.showCardInfo();
-                    break;
-                default:
-                    System.out.println("You typed something that isn't valid as an option");
-                    break;
+            try {
+                switch (userChoice) {
+                    case EXIT:
+                        System.out.println("\nYou're going back to the main menu\n");
+                        break;
+                    case TRANSFER:
+                        atm.transfer();
+                        break;
+                    case WITHDRAWAL:
+                        atm.withdrawal();
+                        break;
+                    case DEPOSIT:
+                        atm.deposit();
+                        break;
+                    case BLOCK_CARD:
+                        atm.blockCard();
+                        break;
+                    case CARD_INFO:
+                        atm.showCardInfo();
+                        break;
+                    default:
+                        System.out.println("You typed something that isn't valid as an option");
+                        break;
+                }
+            } catch (NoBalanceException | OperationCancelledException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Unexpected error: " + e.getMessage());
             }
+
         } while (!userChoice.equals("0"));
     }
 }

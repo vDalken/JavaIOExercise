@@ -15,69 +15,58 @@ class ATM {
     public void transfer() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
         AuditFileHandler auditFileHandler = new AuditFileHandler("resources/audit");
-        try {
-            if (loggedCard.getAccountBalance() == 0) {
-                throw new NoBalanceException();
-            }
 
-            String cardNumber = InputHelper.getCardNumber();
-            if (cardNumber == null) {
-                throw new OperationCancelledException();
-            }
+        if (loggedCard.getAccountBalance() == 0) {
+            throw new NoBalanceException();
+        }
 
-            String amountToTransfer = InputHelper.getAmountToTransfer(loggedCard);
-            if (amountToTransfer == null) {
-                throw new OperationCancelledException();
-            }
+        String cardNumber = InputHelper.getCardNumber();
+        if (cardNumber == null) {
+            throw new OperationCancelledException();
+        }
 
-            if (Integer.parseInt(amountToTransfer) > loggedCard.getAccountBalance() || !(fileHandler.isCardNumberValid(cardNumber, null))) {
-                System.out.println("\nThere was an error when trying to complete the transaction\n");
-                auditFileHandler.addAuditLog(loggedCard.getCardNumber(), cardNumber, amountToTransfer, false);
-            } else {
-                fileHandler.performTransfer(cardNumber, amountToTransfer, updatedResourceFile, loggedCard);
-                auditFileHandler.addAuditLog(loggedCard.getCardNumber(), cardNumber, amountToTransfer, true);
-                System.out.println("\nTransfer was a success!\n");
-            }
-        } catch (NoBalanceException | OperationCancelledException e) {
-            System.out.println("Error: " + e.getMessage());
+        String amountToTransfer = InputHelper.getAmountToTransfer(loggedCard);
+        if (amountToTransfer == null) {
+            throw new OperationCancelledException();
+        }
+
+        if (Integer.parseInt(amountToTransfer) > loggedCard.getAccountBalance() || !(fileHandler.isCardNumberValid(cardNumber, null))) {
+            System.out.println("\nThere was an error when trying to complete the transaction\n");
+            auditFileHandler.addAuditLog(loggedCard.getCardNumber(), cardNumber, amountToTransfer, false);
+        } else {
+            fileHandler.performTransfer(cardNumber, amountToTransfer, updatedResourceFile, loggedCard);
+            auditFileHandler.addAuditLog(loggedCard.getCardNumber(), cardNumber, amountToTransfer, true);
+            System.out.println("\nTransfer was a success!\n");
         }
     }
 
     public void withdrawal() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
-        try {
-            if (loggedCard.getAccountBalance() == 0) {
-                throw new NoBalanceException();
-            }
 
-            String amountToWithdraw = InputHelper.getAmount(loggedCard);
-            if (amountToWithdraw == null) {
-                throw new OperationCancelledException();
-            }
-
-            fileHandler.performWithdrawal(amountToWithdraw, updatedResourceFile, loggedCard);
-
-            System.out.println("\nWithdrawal was a success!");
-        } catch (NoBalanceException | OperationCancelledException e) {
-            System.out.println("Error: " + e.getMessage());
+        if (loggedCard.getAccountBalance() == 0) {
+            throw new NoBalanceException();
         }
-        ;
+
+        String amountToWithdraw = InputHelper.getAmount(loggedCard);
+        if (amountToWithdraw == null) {
+            throw new OperationCancelledException();
+        }
+
+        fileHandler.performWithdrawal(amountToWithdraw, updatedResourceFile, loggedCard);
+
+        System.out.println("\nWithdrawal was a success!");
     }
 
     public void deposit() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
-        try {
-            String amountToDeposit = InputHelper.getAmount(loggedCard);
-            if (amountToDeposit == null) {
-                throw new OperationCancelledException();
-            }
-
-            fileHandler.performDeposit(amountToDeposit, updatedResourceFile, loggedCard);
-
-            System.out.println("\nDeposit was successful!\n");
-        } catch (OperationCancelledException e) {
-            System.out.println("Error: " + e.getMessage());
+        String amountToDeposit = InputHelper.getAmount(loggedCard);
+        if (amountToDeposit == null) {
+            throw new OperationCancelledException();
         }
+
+        fileHandler.performDeposit(amountToDeposit, updatedResourceFile, loggedCard);
+
+        System.out.println("\nDeposit was successful!\n");
     }
 
     public void blockCard() {
