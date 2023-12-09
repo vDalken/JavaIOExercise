@@ -85,7 +85,7 @@ public class Main {
         ATM atm = new ATM(loggedCard, RESOURCE_FILE.getPath());
 
         do {
-            System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block classes.Card\n5. classes.Card Info");
+            System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card\n5. Card Info");
             userChoice = scan.nextLine();
             try {
                 switch (userChoice) {

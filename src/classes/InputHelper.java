@@ -18,7 +18,7 @@ public class InputHelper {
         return cardNumber;
     }
 
-    public static String getAmount(Card loggedCard) {
+    public static String getAmountForWithdrawal(Card loggedCard) {
         Scanner scan = new Scanner(System.in);
         String amount;
         boolean needsToRepeat;
@@ -30,6 +30,29 @@ public class InputHelper {
                 needsToRepeat = true;
             } else {
                 needsToRepeat = Integer.parseInt(amount) > loggedCard.getAccountBalance();
+            }
+            if (amount.equals("0")) {
+                return null;
+            }
+        } while (needsToRepeat);
+        return amount;
+    }
+
+    public static String getAmountForDeposit() {
+        Scanner scan = new Scanner(System.in);
+        String amount;
+        boolean needsToRepeat=false;
+        do {
+            if(needsToRepeat){
+                System.out.println("\nThe minimum cash deposit you can make is 10 euros\n");
+            }
+            System.out.println("\nPlease write the amount");
+            amount = scan.nextLine();
+            amount = amount.trim();
+            if (!isAmountInNumbers(amount)) {
+                needsToRepeat = true;
+            } else {
+                needsToRepeat = Integer.parseInt(amount) < 10;
             }
             if (amount.equals("0")) {
                 return null;
@@ -60,7 +83,7 @@ public class InputHelper {
     public static boolean doesWantTheCardBlock() {
         Scanner scan = new Scanner(System.in);
         System.out.println("\nYou wont be able to login anymore and you'll have to get a new one");
-        System.out.println("\nDo you want your card blocked?");
+        System.out.println("\nDo you want your card blocked? (write true or false)");
         String doesWantTheCardBlocked = scan.nextLine();
         doesWantTheCardBlocked = doesWantTheCardBlocked.trim();
         boolean does = false;

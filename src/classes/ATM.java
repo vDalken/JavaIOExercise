@@ -50,7 +50,7 @@ public class ATM {
             throw new NoBalanceException();
         }
 
-        String amountToWithdraw = InputHelper.getAmount(loggedCard);
+        String amountToWithdraw = InputHelper.getAmountForWithdrawal(loggedCard);
         if (amountToWithdraw == null) {
             throw new OperationCancelledException();
         }
@@ -62,7 +62,7 @@ public class ATM {
 
     public void deposit() {
         ArrayList<String> updatedResourceFile = new ArrayList<>();
-        String amountToDeposit = InputHelper.getAmount(loggedCard);
+        String amountToDeposit = InputHelper.getAmountForDeposit();
         if (amountToDeposit == null) {
             throw new OperationCancelledException();
         }
@@ -78,7 +78,7 @@ public class ATM {
         boolean doesWantTheCardBlocked = InputHelper.doesWantTheCardBlock();
         if (doesWantTheCardBlocked) {
             fileHandler.blockCard(updatedResourceFile, loggedCard);
-            System.out.println("\nclasses.Card was blocked successfully!");
+            System.out.println("\nCard was blocked successfully!");
         } else {
             System.out.println("\nBecause you didn't give us a definitive answer, we didn't block your card\n");
         }
@@ -86,7 +86,7 @@ public class ATM {
 
     public void showCardInfo() {
         System.out.println("\nName: " + loggedCard.getName());
-        System.out.println("classes.Card Number: " + loggedCard.getCardNumber());
+        System.out.println("Card Number: " + loggedCard.getCardNumber());
         System.out.println("Passcode : " + loggedCard.getPasscode());
         System.out.println("Account Balance: " + loggedCard.getAccountBalance() + "\n");
     }
