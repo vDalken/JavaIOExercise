@@ -1,10 +1,14 @@
+package classes;
+
+import interfaces.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-class FileHandler implements UsersRepository, Serializable{
+public class FileHandler implements AccountManagement, CardInformation, CardManagement, FileOperations, TransactionOperations, Serializable {
     private final String FILE_PATH;
 
     public FileHandler(String filePath) {
@@ -63,7 +67,7 @@ class FileHandler implements UsersRepository, Serializable{
                 writer.append(data).append("\n");
             }
         } catch (IOException e) {
-            throw new RuntimeException("An error has occurred while processing data",e);
+            throw new RuntimeException("An error has occurred while processing data", e);
         }
     }
 
@@ -196,7 +200,7 @@ class FileHandler implements UsersRepository, Serializable{
 
     private String concatenateSplitData(String[] splitData) {
         String dataToWrite = "";
-        for(String data : splitData){
+        for (String data : splitData) {
             dataToWrite = dataToWrite.concat(data + "-");
         }
         dataToWrite = dataToWrite.substring(0, dataToWrite.length() - 1);

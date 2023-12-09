@@ -1,7 +1,11 @@
+package classes;
+
+import interfaces.Serializable;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
-class AuditFileHandler implements Serializable {
+public class AuditFileHandler implements Serializable {
     private final String FILE_PATH;
     public AuditFileHandler(String filePath) {
         this.FILE_PATH=filePath;

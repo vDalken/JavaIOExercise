@@ -1,9 +1,12 @@
+package classes;
+
+import classes.Card;
 import customexceptions.NoBalanceException;
 import customexceptions.OperationCancelledException;
 
 import java.util.ArrayList;
 
-class ATM {
+public class ATM {
     private Card loggedCard;
     private final FileHandler fileHandler;
 
@@ -75,7 +78,7 @@ class ATM {
         boolean doesWantTheCardBlocked = InputHelper.doesWantTheCardBlock();
         if (doesWantTheCardBlocked) {
             fileHandler.blockCard(updatedResourceFile, loggedCard);
-            System.out.println("\nCard was blocked successfully!");
+            System.out.println("\nclasses.Card was blocked successfully!");
         } else {
             System.out.println("\nBecause you didn't give us a definitive answer, we didn't block your card\n");
         }
@@ -83,7 +86,7 @@ class ATM {
 
     public void showCardInfo() {
         System.out.println("\nName: " + loggedCard.getName());
-        System.out.println("Card Number: " + loggedCard.getCardNumber());
+        System.out.println("classes.Card Number: " + loggedCard.getCardNumber());
         System.out.println("Passcode : " + loggedCard.getPasscode());
         System.out.println("Account Balance: " + loggedCard.getAccountBalance() + "\n");
     }

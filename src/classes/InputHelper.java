@@ -1,6 +1,10 @@
+package classes;
+
+import classes.Card;
+
 import java.util.Scanner;
 
-class InputHelper {
+public class InputHelper {
     public static String getCardNumber() {
         Scanner scan = new Scanner(System.in);
         String cardNumber = "";

@@ -1,3 +1,8 @@
+package classes;
+
+import classes.ATM;
+import classes.Card;
+import classes.FileHandler;
 import customexceptions.CardInfoNotFoundException;
 import customexceptions.NoBalanceException;
 import customexceptions.OperationCancelledException;
@@ -51,7 +56,7 @@ public class Main {
         System.out.println("write your name");
         String name = scan.nextLine();
         Card newCard = new Card(name);
-        System.out.println("\nYour Card Number: " + newCard.getCardNumber());
+        System.out.println("\nCard Number: " + newCard.getCardNumber());
         System.out.println("\nYour Passcode: " + newCard.getPasscode() + "\n");
         fileHandler.createAccount(name, newCard.getCardNumber(), newCard.getPasscode());
     }
@@ -80,7 +85,7 @@ public class Main {
         ATM atm = new ATM(loggedCard, RESOURCE_FILE.getPath());
 
         do {
-            System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block Card\n5. Card Info");
+            System.out.println("0. Go Back\n1. Transfer\n2. Withdrawal\n3. Deposit\n4. Block classes.Card\n5. classes.Card Info");
             userChoice = scan.nextLine();
             try {
                 switch (userChoice) {
